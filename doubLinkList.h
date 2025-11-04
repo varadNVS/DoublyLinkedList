@@ -22,11 +22,17 @@ class node{
             this->prev = prev;
         }
 
+        node(node &node1){
+            this->data = node1.data;
+            this->next = node1.next;
+            this->prev = node1.prev;
+        }
+
         ~node(){
-            next = nullptr;
-            prev = nullptr;
             delete next;
             delete prev;
+            next = nullptr;
+            prev = nullptr;
         }
         
         //____________data ____________________
@@ -72,10 +78,10 @@ public:
         dllTail = nullptr;
     }
     ~doubLinkList(){
-        dllHead = nullptr;
         delete dllHead;
-        dllTail = nullptr;
         delete dllTail;
+        dllHead = nullptr;
+        dllTail = nullptr;
     }
 //______________Adding the data__________________
     //adds data at the back of the node
@@ -90,16 +96,14 @@ public:
 
             dllDataNumber++;
             newNode = nullptr;
-            delete newNode;
         }
-        else if (!isEmpty())
+        else 
         {
             node *newNode = new node(dataAdded,nullptr,dllTail);
             dllTail->setNext(newNode);
             dllTail = newNode;
             dllDataNumber++;
-            newNode = nullptr;
-            delete newNode;
+            newNode = nullptr;      
         } 
     }
 
@@ -115,20 +119,19 @@ public:
 
             dllDataNumber++;
             newNode = nullptr;
-            delete newNode;
         }
         else if (!isEmpty())
         {
+            
             node *newNode = new node(dataAdded,dllHead,nullptr);
             dllHead->setPrevious(newNode);
-            dllTail = dllHead;
+            // dllTail = dllHead;
             dllHead = newNode;
 
             //3) dllhead = newNode | 2) dlltail = dllhead | 1) dllheads prev -> newNode. follow numbers to follow process
 
             dllDataNumber++;
             newNode = nullptr;
-            delete newNode;
         } 
     }
 //---------Data Display------------------------------------
@@ -148,7 +151,6 @@ public:
                 values++;
             }
             printValue = nullptr;
-            delete printValue;
         }
     }
 
@@ -176,7 +178,6 @@ public:
                 position++;
             }
             printValue = nullptr;
-            delete printValue;
         }
         return result;
     }
