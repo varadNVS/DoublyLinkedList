@@ -7,8 +7,6 @@
 
 #include <iostream>
 
-using namespace std;
-
 //---------------Class NODE-----------------------------
 class node{
     private:
@@ -20,12 +18,6 @@ class node{
             this->data = data;
             this->next = next;
             this->prev = prev;
-        }
-
-        node(node &node1){
-            this->data = node1.data;
-            this->next = node1.next;
-            this->prev = node1.prev;
         }
 
         ~node(){
@@ -53,11 +45,17 @@ class node{
         }
         //____________previous____________________
         node* getPrevious(){
-            return next;
+            return prev;
         }
 
         node* setPrevious(node* prev){
             this->prev = prev;
+            return 0;
+        }
+
+        node* DeleteNode(node* DeletableNodeAddress){
+            DeletableNodeAddress->next = nullptr;
+            DeletableNodeAddress->prev = nullptr;
             return 0;
         }
 
@@ -77,68 +75,44 @@ public:
         dllHead = nullptr;
         dllTail = nullptr;
     }
-    ~doubLinkList(){
-        delete dllHead;
-        delete dllTail;
-        dllHead = nullptr;
-        dllTail = nullptr;
-    }
 //______________Adding the data__________________
-    //adds data at the back of the node
-    void addData(int dataAdded){
+
+    void addData(int dataAdded,bool direction){
         if (isEmpty())
         {
             node *newNode = new node(dataAdded,dllTail,dllHead);
             dllHead = newNode;
             dllTail = newNode;
-
-            // --|next = null| data |prev = null| && tail & head (data node)
-
             dllDataNumber++;
-            newNode = nullptr;
-        }
-        else 
-        {
-            node *newNode = new node(dataAdded,nullptr,dllTail);
-            dllTail->setNext(newNode);
-            dllTail = newNode;
-            dllDataNumber++;
-            newNode = nullptr;      
-        } 
-    }
-
-    // adds the data at front of the node.
-    void addDataFront(int dataAdded){
-        if (isEmpty())
-        {
-            node *newNode = new node(dataAdded,dllTail,dllHead);
-            dllHead = newNode;
-            dllTail = newNode;
-
-            // --|next = null| data |prev = null| && tail & head (data node)
-
-            dllDataNumber++;
-            newNode = nullptr;
         }
         else if (!isEmpty())
         {
-            
-            node *newNode = new node(dataAdded,dllHead,nullptr);
-            dllHead->setPrevious(newNode);
-            // dllTail = dllHead;
-            dllHead = newNode;
-
-            //3) dllhead = newNode | 2) dlltail = dllhead | 1) dllheads prev -> newNode. follow numbers to follow process
-
+            if (!direction) //Front
+            {
+                node *newNode = new node(dataAdded,dllHead,nullptr);
+                dllHead->setPrevious(newNode);
+                dllHead = newNode;
+            } else { //back
+                node *newNode = new node(dataAdded,nullptr,dllTail);
+                dllTail->setNext(newNode);
+                dllTail = newNode;
+            }
             dllDataNumber++;
-            newNode = nullptr;
         } 
+    }
+
+    void addDataBack(int dataAdded){
+        addData(dataAdded,true);
+    }
+
+    void addDataFront(int dataAdded){
+        addData(dataAdded,false);
     }
 //---------Data Display------------------------------------
     void Display(){
         if (isEmpty())
         {
-            cout << "list is Empty" << endl;
+            std::cerr << "list is Empty" << std::endl;
         }
         else if (!isEmpty())
         {
@@ -146,7 +120,7 @@ public:
             node *printValue = dllHead;
             while (values < dllDataNumber)
             {
-                cout << printValue->getData() << endl;
+                std::cout << printValue->getData() << std::endl;
                 printValue = printValue->getNext();
                 values++;
             }
@@ -155,32 +129,116 @@ public:
     }
 
     void DisplayHeadAndTail(){ // for testing if display doesnt work.
-        cout << dllHead->getData() << " ---- " << dllTail->getData() << endl;
+        std::cout << dllHead->getData() << " ---- " << dllTail->getData() << std::endl;
     }
 //-----------------Search Functions-----------------------------------
-    int SearchData(int dataSearch){
+    int SearchData(int data){
+        return SearchDataHidden(data,-1,false);
+    }
+    int SearchPosition(int position){
+        if(position < 0 || position > dllDataNumber){
+            std::cout << "position out of bounds" << std::endl;
+            return -1;
+        }
+        return SearchDataHidden(-1,position,true);
+    }
+    int SearchDataHidden(int dataSearch,int positionSearch,bool DataOrPos){
         int result;
         if (isEmpty())
         {
-            cout << "list is Empty" << endl;
+            std::cerr << "list is Empty" << std::endl;
+            return -1;
         }
-        else if (!isEmpty())
-        {
             int position = 0;
             node *printValue = dllHead;
             while (position < dllDataNumber)
             {
-                if(printValue->getData() == dataSearch){
+                if (DataOrPos)
+                {
+                    if(positionSearch == position){
+                    result = printValue->getData();
+                    break;
+                    }
+                    else if(position == dllDataNumber - 1)
+                    {
+                        std::cerr << "data does not exist!!" << std::endl;
+                        return -1;
+                    }
+                }
+                else{
+                    if(printValue->getData() == dataSearch){
                     result = position;
                     break;
+                    }
+                    else if(position == dllDataNumber - 1)
+                    {
+                        std::cerr << "data does not exist!!" << std::endl;
+                        return -1;
+                    }
                 }
                 printValue = printValue->getNext();
                 position++;
             }
             printValue = nullptr;
-        }
         return result;
     }
+//-----------------Remove--------------------------------------
+
+void RemovalForPos(int position){
+    RemovalForBoth(position,-1);
+}
+void RemovalForData(int data){
+    RemovalForBoth(-1,data);
+}
+void RemovalForBoth(int positionToDelete,int dataSearch){
+        int position = 0;
+    if(isEmpty()){
+        std::cerr << "list is Empty" << std::endl;
+        return;
+    }
+    else if(positionToDelete >= dllDataNumber){
+        std::cerr << "element out of scope" << std::endl;
+        return;
+    }
+node *printValue = dllHead;  
+while (position < dllDataNumber){
+        if((position == positionToDelete && (positionToDelete != 0 && positionToDelete != dllDataNumber - 1)) || (printValue->getData() == dataSearch && (printValue != dllHead && printValue != dllTail))){
+            node *prevNode = printValue->getPrevious();
+            node *nextNode = printValue->getNext();
+            
+            prevNode->setNext(nextNode);
+            nextNode->setPrevious(prevNode);
+
+            printValue->DeleteNode(printValue);
+            delete printValue; 
+            dllDataNumber--;
+            break;
+        }
+        else if((position == positionToDelete && positionToDelete == 0) || (printValue->getData() == dataSearch && printValue == dllHead))
+        {
+            node *nextNode = printValue->getNext();
+            nextNode->setPrevious(nullptr);
+            dllHead = nextNode;
+
+            printValue->DeleteNode(printValue);
+            delete printValue; 
+            dllDataNumber--;
+            break;   
+        }
+        else if((position == positionToDelete && positionToDelete == dllDataNumber - 1) || ((printValue->getData() == dataSearch && printValue == dllTail))){
+            node *prevNode = printValue->getPrevious();
+            prevNode->setNext(nullptr);
+            dllTail = prevNode;
+            printValue->DeleteNode(printValue);
+            dllDataNumber--;
+            break; 
+        }
+    printValue = printValue->getNext();
+    position++;
+    }
+
+}
+
 //--------------------------------------------------------------------
     bool isEmpty(){
         return dllDataNumber == 0;
