@@ -1,23 +1,26 @@
 #include<iostream>
 #include"doubLinkList.h"
-using namespace std;
 
 int main()
 {
     doubLinkList myList;
-    cout << "is the list empty now: ? " << myList.isEmpty() << endl;
-    cout << "--------------------------" << endl;
+    std::cout << "is the list empty now: ? " << myList.isEmpty() << std::endl;
+    std::cout << "--------------------------" << std::endl;
 
     for (int i = 0; i < 10; i++)
     {
-        cout << i << endl;
-        myList.addData(i);
-        myList.addDataFront(i * 10);
+        myList.addDataBack(i);
+        myList.addDataFront(i + 10);
     }
-    cout << "is the list empty now: ? " << myList.isEmpty() << endl;
-    cout << "------print------" << endl;
+    std::cout << "is the list empty now: ? " << myList.isEmpty() << std::endl;
+    std::cout << "------print------" << std::endl;
+    myList.RemovalForPos(7);
+    myList.RemovalForData(18);
     myList.Display();
-
-    cout << "position of data 20: " << myList.SearchData(20) << endl;
+    std::cout << myList.SearchData(14) << std::endl;
+    std::cout << "data for 17 :" << myList.SearchPosition(17) << std::endl;
+    
+    
+    myList.DisplayHeadAndTail();
     return 0;
 }
