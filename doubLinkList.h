@@ -7,7 +7,6 @@
 
 #include <iostream>
 
-//---------------Class NODE-----------------------------
 class node{
     private:
         int data;
@@ -27,14 +26,15 @@ class node{
             prev = nullptr;
         }
         
-        //____________data ____________________
+
         int getData(){
             return data;
         }
         void setData(int data){
             this->data = data;
         }
-        //____________next__________________
+
+
         node* getNext(){
             return next;
         }
@@ -43,16 +43,15 @@ class node{
             this->next = next;
             return 0;
         }
-        //____________previous____________________
+        
+
         node* getPrevious(){
             return prev;
         }
-
         node* setPrevious(node* prev){
             this->prev = prev;
             return 0;
         }
-
         node* DeleteNode(node* DeletableNodeAddress){
             DeletableNodeAddress->next = nullptr;
             DeletableNodeAddress->prev = nullptr;
@@ -62,7 +61,6 @@ class node{
 };
 
 
-//-------------class for doubly linked list-------------------------
 class doubLinkList
 {
 private:
@@ -70,20 +68,24 @@ private:
     node* dllHead;
     node* dllTail;
 public:
+
     doubLinkList(){
         dllDataNumber = 0;
         dllHead = nullptr;
         dllTail = nullptr;
     }
-//______________Adding the data__________________
+
 
     void addData(int dataAdded,bool direction){
         if (isEmpty())
         {
+            
             node *newNode = new node(dataAdded,dllTail,dllHead);
             dllHead = newNode;
             dllTail = newNode;
             dllDataNumber++;
+            std::cout << "dlldataNumber: " << dllDataNumber << std::endl;
+            
         }
         else if (!isEmpty())
         {
@@ -96,19 +98,20 @@ public:
                 node *newNode = new node(dataAdded,nullptr,dllTail);
                 dllTail->setNext(newNode);
                 dllTail = newNode;
+                
             }
             dllDataNumber++;
+            std::cout << "dlldataNumber: " << dllDataNumber << std::endl;
         } 
     }
-
     void addDataBack(int dataAdded){
         addData(dataAdded,true);
     }
-
     void addDataFront(int dataAdded){
         addData(dataAdded,false);
     }
-//---------Data Display------------------------------------
+
+
     void Display(){
         if (isEmpty())
         {
@@ -116,9 +119,9 @@ public:
         }
         else if (!isEmpty())
         {
-            int values = 0;
+            int values = 1;
             node *printValue = dllHead;
-            while (values < dllDataNumber)
+            while (values <= dllDataNumber)
             {
                 std::cout << printValue->getData() << std::endl;
                 printValue = printValue->getNext();
@@ -129,14 +132,16 @@ public:
     }
 
     void DisplayHeadAndTail(){ // for testing if display doesnt work.
-        std::cout << dllHead->getData() << " ---- " << dllTail->getData() << std::endl;
+        std::cout << dllHead->getData()
+        << "*" << SearchData(dllHead->getData()) << " --"<< dllDataNumber <<"-- " << dllTail->getData() << "*" << SearchData(dllTail->getData()) << std::endl;
     }
-//-----------------Search Functions-----------------------------------
+
+
     int SearchData(int data){
         return SearchDataHidden(data,-1,false);
     }
     int SearchPosition(int position){
-        if(position < 0 || position > dllDataNumber){
+        if(position < 1 || position > dllDataNumber){
             std::cout << "position out of bounds" << std::endl;
             return -1;
         }
@@ -149,9 +154,9 @@ public:
             std::cerr << "list is Empty" << std::endl;
             return -1;
         }
-            int position = 0;
+            int position = 1;
             node *printValue = dllHead;
-            while (position < dllDataNumber)
+            while (position <= dllDataNumber)
             {
                 if (DataOrPos)
                 {
@@ -159,7 +164,7 @@ public:
                     result = printValue->getData();
                     break;
                     }
-                    else if(position == dllDataNumber - 1)
+                    else if(position == dllDataNumber)
                     {
                         std::cerr << "data does not exist!!" << std::endl;
                         return -1;
@@ -170,7 +175,7 @@ public:
                     result = position;
                     break;
                     }
-                    else if(position == dllDataNumber - 1)
+                    else if(position == dllDataNumber)
                     {
                         std::cerr << "data does not exist!!" << std::endl;
                         return -1;
@@ -182,7 +187,7 @@ public:
             printValue = nullptr;
         return result;
     }
-//-----------------Remove--------------------------------------
+
 
 void RemovalForPos(int position){
     RemovalForBoth(position,-1);
@@ -190,19 +195,30 @@ void RemovalForPos(int position){
 void RemovalForData(int data){
     RemovalForBoth(-1,data);
 }
+void ClearAll(){
+    while(!isEmpty())
+    {
+        RemovalForPos(1);
+    }
+}
 void RemovalForBoth(int positionToDelete,int dataSearch){
-        int position = 0;
+        int position = 1;
     if(isEmpty()){
         std::cerr << "list is Empty" << std::endl;
         return;
     }
-    else if(positionToDelete >= dllDataNumber){
+    else if(positionToDelete > dllDataNumber || positionToDelete == 0){
         std::cerr << "element out of scope" << std::endl;
         return;
     }
+    if (dllDataNumber == 1)
+    {
+        position = 0;
+    }
+    
 node *printValue = dllHead;  
 while (position < dllDataNumber){
-        if((position == positionToDelete && (positionToDelete != 0 && positionToDelete != dllDataNumber - 1)) || (printValue->getData() == dataSearch && (printValue != dllHead && printValue != dllTail))){
+        if((position == positionToDelete && (positionToDelete != 1 && positionToDelete != dllDataNumber)) || (printValue->getData() == dataSearch && (printValue != dllHead && printValue != dllTail))){
             node *prevNode = printValue->getPrevious();
             node *nextNode = printValue->getNext();
             
@@ -214,7 +230,7 @@ while (position < dllDataNumber){
             dllDataNumber--;
             break;
         }
-        else if((position == positionToDelete && positionToDelete == 0) || (printValue->getData() == dataSearch && printValue == dllHead))
+        else if((position == positionToDelete && (positionToDelete == 1 && dllDataNumber != 1 )) || (printValue->getData() == dataSearch && printValue == dllHead))
         {
             node *nextNode = printValue->getNext();
             nextNode->setPrevious(nullptr);
@@ -225,7 +241,7 @@ while (position < dllDataNumber){
             dllDataNumber--;
             break;   
         }
-        else if((position == positionToDelete && positionToDelete == dllDataNumber - 1) || ((printValue->getData() == dataSearch && printValue == dllTail))){
+        else if((position == positionToDelete && (positionToDelete == dllDataNumber && dllDataNumber != 1)) || ((printValue->getData() == dataSearch && printValue == dllTail))){
             node *prevNode = printValue->getPrevious();
             prevNode->setNext(nullptr);
             dllTail = prevNode;
@@ -233,13 +249,19 @@ while (position < dllDataNumber){
             dllDataNumber--;
             break; 
         }
+        else if (positionToDelete == dllDataNumber && dllDataNumber == 1)
+        {
+            printValue->DeleteNode(printValue);
+            dllDataNumber--;
+            break;
+        }
+        
     printValue = printValue->getNext();
     position++;
     }
-
 }
 
-//--------------------------------------------------------------------
+
     bool isEmpty(){
         return dllDataNumber == 0;
     }
